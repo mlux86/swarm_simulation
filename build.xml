@@ -1,0 +1,52 @@
+<project name="Swarm simulation, Markus Lux" basedir="." default="dist">
+	<property name="src.dir" value="src" />
+
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="dist.dir" value="dist" />
+	<property name="javadoc.dir" value="${dist.dir}/javadoc" />
+
+	<property name="jar-file-name" value="simulation.jar" />
+	<property name="main-class" value="de.mlux1.swarmsim.Main" />
+
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}"  includeantruntime="no" />
+        <copy todir="${classes.dir}">
+              <fileset dir="${src.dir}">
+                <include name="**/*.png" />
+              </fileset>
+        </copy>
+	</target>
+
+	<target name="dist" depends="compile, javadoc">
+		<mkdir dir="${dist.dir}" />
+		<jar destfile="${dist.dir}/${jar-file-name}" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}" />
+            </manifest>
+		</jar>
+		<antcall target="clean" />
+	</target>
+
+	<target name="run" depends="dist">
+		<java jar="${dist.dir}/${jar-file-name}" fork="true" />
+	</target>
+
+	<target name="javadoc">
+		<javadoc access="private" destdir="${javadoc.dir}" author="true" use="true" windowtitle="API">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="clean-dist" depends="clean">
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+</project>
